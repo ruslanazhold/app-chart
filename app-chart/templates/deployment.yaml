@@ -1,23 +1,46 @@
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata: 
+#   name: nginx-app
+#   labels:
+#     managed-by: dso 
+# spec:
+#   replicas: {{ .Values.replicas}}
+#   selector:
+#     matchLabels:
+#       application: nginx-app
+#   template:
+#     metadata:
+#       labels:
+#         application: nginx-app
+#     spec:
+#       serviceAccountName: {{ .Values.serviceAccountName}} #nginx-sa
+#       containers:
+#         - name: {{ .Values.containerName}} #nginx
+#           image: {{ .Values.image.repository}}:{{ .Values.image.tag}} #us-central1-docker.pkg.dev/master-tangent-417822/app-chart/docker-image:v5
+#           ports:
+#             - name: {{ .Values.containerPortName}} #http
+#               containerPort: {{ .Values.containerPortNumber}}  #80
 apiVersion: apps/v1
 kind: Deployment
-metadata: 
-  name: nginx-app
+metadata:
+  name: {{ .Values.nginxApp.deploymentName }}
   labels:
-    managed-by: dso 
+{{- include "commonLabels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.replicas}}
+  replicas: {{ .Values.nginxApp.replicas }}
   selector:
     matchLabels:
-      application: nginx-app
+{{- include "commonLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        application: nginx-app
+{{- include "commonLabels" . | nindent 8 }}
     spec:
-      serviceAccountName: {{ .Values.serviceAccountName}} #nginx-sa
+      serviceAccountName: {{ .Values.serviceAccountName }}
       containers:
-        - name: {{ .Values.containerName}} #nginx
-          image: {{ .Values.image.repository}}:{{ .Values.image.tag}} #us-central1-docker.pkg.dev/master-tangent-417822/app-chart/docker-image:v5
+        - name: {{ .Values.nginxApp.containerName }}
+          image: {{ .Values.nginxApp.image.repository }}:{{ .Values.nginxApp.image.tag }}
           ports:
-            - name: {{ .Values.containerPortName}} #http
-              containerPort: {{ .Values.containerPortNumber}}  #80
+            - name: {{ .Values.nginxApp.containerPortName }}
+              containerPort: {{ .Values.nginxApp.containerPortNumber }}

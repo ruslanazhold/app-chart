@@ -1,0 +1,54 @@
+name: Package and Push Helm Charts
+
+on:
+  workflow_run:
+    workflows: [" Helm Chart Lint"]
+    types:
+      - completed
+  workflow_dispatch:
+
+env:
+    PROJECT_ID: master-tangent-417822
+    REGISTRY_LOCATION: us-central1
+    REPOSITORY: app-chart
+
+jobs:
+  package_and_push:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Set up Helm
+      uses: azure/setup-helm@v4
+
+    - name: Package Helm Charts
+      run: |
+        helm package new-app/ -d ./packaged-charts
+      working-directory: ${{ github.workspace }}
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: '1.17'
+
+    - name: Install Helm plugin
+      run: |
+        helm plugin install https://github.com/chartmuseum/helm-push
+
+    - name: Authenticate with Google Cloud
+      uses: 'google-github-actions/auth@v2'
+      with:
+        credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+        token_format: access_token
+
+    - name: Helm Login
+      run: |
+       gcloud auth print-access-token | helm registry login -u oauth2accesstoken \
+       --password-stdin https://us-central1-docker.pkg.dev
+
+    - name: Push Helm Charts
+      run: |
+        helm push ./packaged-charts/*.tgz oci://us-central1-docker.pkg.dev/master-tangent-417822/app-chart

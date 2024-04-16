@@ -2,17 +2,31 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicas: 3
-deploymentName: nginx-app
-serviceAccountName: nginx-sa
-containerName: nginx
+# replicas: 3
+# deploymentName: nginx-app
+# serviceAccountName: nginx-sa
+# containerName: nginx
 
-image:
-  repository: us-central1-docker.pkg.dev/master-tangent-417822/app-chart/docker-image
-  tag: "v5"
+# image:
+#   repository: us-central1-docker.pkg.dev/master-tangent-417822/app-chart/docker-image
+#   tag: "v5"
 
-containerPortName: http 
-containerPortNumber: 80
-containerTargetPortNumber: 80
+# containerPortName: http 
+# containerPortNumber: 80
+# containerTargetPortNumber: 80
 
-serviceName: nginx-cvc
+# serviceName: nginx-cvc
+nginxApp:
+  replicas: 15
+  deploymentName: nginx-app
+  containerName: nginx
+  image:
+    repository:  us-central1-docker.pkg.dev/master-tangent-417822/app-chart/docker-image
+    tag: "v2"
+  containerPortName: http
+  containerPortNumber: 80
+  containerTargetPortNumber: 80
+
+serviceAccountName: nginx-service-account
+
+serviceName: nginx-svc
