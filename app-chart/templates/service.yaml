@@ -19,8 +19,9 @@ metadata:
 {{- include "commonLabels" . | nindent 4 }}
 spec:
   selector:
-{{- include "commonLabels" . | nindent 4 }}
+    application: nginx-app
   ports:
     - name: {{ .Values.nginxApp.containerPortName }}
       port: {{ .Values.nginxApp.containerPortNumber }}
-      targetPort: {{ .Values.nginxApp.containerTargetPortNumber }}
+      targetPort: {{ .Values.nginxApp.targetPortNumber }}
+      
