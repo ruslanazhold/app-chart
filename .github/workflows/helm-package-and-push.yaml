@@ -2,7 +2,7 @@ name: Package and Push Helm Charts
 
 on:
   workflow_run:
-    workflows: [" Helm Chart Lint"]
+    workflows: ["Helm Chart Lint"]
     types:
       - completed
   workflow_dispatch:
@@ -26,7 +26,7 @@ jobs:
 
     - name: Package Helm Charts
       run: |
-        helm package new-app/ -d ./packaged-charts
+        helm package app-chart/ -d ./packaged-charts
       working-directory: ${{ github.workspace }}
 
     - name: Set up Go
